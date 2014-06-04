@@ -3,6 +3,7 @@ package com.missionbit.megajumper;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -13,6 +14,7 @@ public class MegaJumper extends ApplicationAdapter {
     private static final int GRAVITY = -20;
     private static final int PLAYER_JUMP_VELOCITY = 1000;
 
+    private OrthographicCamera camera;
     private SpriteBatch batch;
 
     private int width;
@@ -29,6 +31,8 @@ public class MegaJumper extends ApplicationAdapter {
         batch = new SpriteBatch();
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
+
+        camera = new OrthographicCamera(width, height);
 
         gravity = new Vector2();
 
@@ -50,6 +54,8 @@ public class MegaJumper extends ApplicationAdapter {
 
     private void resetGame() {
         gravity.set(0, GRAVITY);
+
+        camera.position.set(width/2, height/2, 0);
 
         player.bounds.setX(width/2);
         player.bounds.setY(0);
@@ -94,9 +100,14 @@ public class MegaJumper extends ApplicationAdapter {
 
         //x position wraps around
         player.position.x = (player.position.x + width) % width;
+
+        if (player.position.y > camera.position.y)
+            camera.position.y = player.position.y;
     }
 
     private void drawGame() {
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(player.image, player.position.x, player.position.y);
 
