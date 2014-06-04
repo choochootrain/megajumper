@@ -15,5 +15,7 @@ public class Player {
         position = new Vector2();
         velocity = new Vector2();
         bounds = new Rectangle();
+        bounds.setWidth(image.getWidth());
+        bounds.setHeight(image.getHeight());
     }
 }

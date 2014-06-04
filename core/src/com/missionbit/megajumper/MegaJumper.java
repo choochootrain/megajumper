@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MegaJumper extends ApplicationAdapter {
     private static final int GRAVITY = -20;
     private static final int PLAYER_JUMP_VELOCITY = 1000;
@@ -21,7 +24,7 @@ public class MegaJumper extends ApplicationAdapter {
 
     private Player player;
 
-    private Platform platform;
+    private List<Platform> platforms;
 
     @Override
     public void create () {
@@ -33,7 +36,7 @@ public class MegaJumper extends ApplicationAdapter {
 
         player = new Player();
 
-        platform = new Platform();
+        platforms = new ArrayList<Platform>();
 
         resetGame();
     }
@@ -50,20 +53,34 @@ public class MegaJumper extends ApplicationAdapter {
     private void resetGame() {
         gravity.set(0, GRAVITY);
 
-        player.bounds.set(width/2, 0, player.image.getWidth(), player.image.getHeight());
+        player.bounds.setX(width/2);
+        player.bounds.setY(0);
         player.position.set(width/2, 0);
         player.velocity.set(0, 0);
 
-        platform.bounds.set(width/2, height/2, platform.image.getWidth(), platform.image.getHeight());
+        platforms.clear();
+        for (int i = 0; i < 5; i++) {
+            Platform p = new Platform();
+            p.position.x = (float) (Math.random() * width);
+            p.position.y = i * height / 5;
+            p.bounds.setX(p.position.x);
+            p.bounds.setY(p.position.y);
+            platforms.add(p);
+        }
     }
 
     private void updateGame() {
         //time elapsed since last call to render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        //if user touched the screen, or you hit the platform, start jumping
-        if (Gdx.input.justTouched() || platform.bounds.overlaps(player.bounds)) {
+        if (Gdx.input.justTouched()) {
             player.velocity.y = PLAYER_JUMP_VELOCITY;
+        }
+
+        //if user hits a platform, start jumping
+        for (Platform platform : platforms) {
+            if (platform.bounds.overlaps(player.bounds))
+                player.velocity.y = PLAYER_JUMP_VELOCITY;
         }
 
         //apply the force of gravity
@@ -76,7 +93,9 @@ public class MegaJumper extends ApplicationAdapter {
     private void drawGame() {
         batch.begin();
         batch.draw(player.image, player.position.x, player.position.y);
-        batch.draw(platform.image, platform.bounds.x, platform.bounds.y);
+
+        for (Platform platform : platforms)
+            batch.draw(platform.image, platform.bounds.x, platform.bounds.y);
         batch.end();
     }
 }

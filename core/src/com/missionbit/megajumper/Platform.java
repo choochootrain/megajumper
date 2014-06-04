@@ -13,6 +13,8 @@ public class Platform {
         image = new Texture("platform.png");
         position = new Vector2();
         bounds = new Rectangle();
+        bounds.setWidth(image.getWidth());
+        bounds.setHeight(image.getHeight());
     }
 }
 
