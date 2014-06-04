@@ -21,8 +21,7 @@ public class MegaJumper extends ApplicationAdapter {
 
     private Player player;
 
-    private Texture platformImage;
-    private Rectangle platformBounds;
+    private Platform platform;
 
     @Override
     public void create () {
@@ -34,8 +33,7 @@ public class MegaJumper extends ApplicationAdapter {
 
         player = new Player();
 
-        platformImage = new Texture("platform.png");
-        platformBounds = new Rectangle();
+        platform = new Platform();
 
         resetGame();
     }
@@ -56,7 +54,7 @@ public class MegaJumper extends ApplicationAdapter {
         player.position.set(width/2, 0);
         player.velocity.set(0, 0);
 
-        platformBounds.set(width/2, height/2, platformImage.getWidth(), platformImage.getHeight());
+        platform.bounds.set(width/2, height/2, platform.image.getWidth(), platform.image.getHeight());
     }
 
     private void updateGame() {
@@ -64,7 +62,7 @@ public class MegaJumper extends ApplicationAdapter {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         //if user touched the screen, or you hit the platform, start jumping
-        if (Gdx.input.justTouched() || platformBounds.overlaps(player.bounds)) {
+        if (Gdx.input.justTouched() || platform.bounds.overlaps(player.bounds)) {
             player.velocity.y = PLAYER_JUMP_VELOCITY;
         }
 
@@ -78,7 +76,7 @@ public class MegaJumper extends ApplicationAdapter {
     private void drawGame() {
         batch.begin();
         batch.draw(player.image, player.position.x, player.position.y);
-        batch.draw(platformImage, platformBounds.x, platformBounds.y);
+        batch.draw(platform.image, platform.bounds.x, platform.bounds.y);
         batch.end();
     }
 }
