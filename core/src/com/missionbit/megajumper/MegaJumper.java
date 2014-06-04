@@ -19,10 +19,7 @@ public class MegaJumper extends ApplicationAdapter {
 
     private Vector2 gravity;
 
-    private Texture playerImage;
-    private Rectangle playerBounds;
-    private Vector2 playerPosition;
-    private Vector2 playerVelocity;
+    private Player player;
 
     private Texture platformImage;
     private Rectangle platformBounds;
@@ -35,10 +32,7 @@ public class MegaJumper extends ApplicationAdapter {
 
         gravity = new Vector2();
 
-        playerImage = new Texture("missionbit.png");
-        playerBounds = new Rectangle();
-        playerPosition = new Vector2();
-        playerVelocity = new Vector2();
+        player = new Player();
 
         platformImage = new Texture("platform.png");
         platformBounds = new Rectangle();
@@ -58,9 +52,9 @@ public class MegaJumper extends ApplicationAdapter {
     private void resetGame() {
         gravity.set(0, GRAVITY);
 
-        playerBounds.set(width/2, 0, playerImage.getWidth(), playerImage.getHeight());
-        playerPosition.set(width/2, 0);
-        playerVelocity.set(0, 0);
+        player.bounds.set(width/2, 0, player.image.getWidth(), player.image.getHeight());
+        player.position.set(width/2, 0);
+        player.velocity.set(0, 0);
 
         platformBounds.set(width/2, height/2, platformImage.getWidth(), platformImage.getHeight());
     }
@@ -70,20 +64,20 @@ public class MegaJumper extends ApplicationAdapter {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         //if user touched the screen, or you hit the platform, start jumping
-        if (Gdx.input.justTouched() || platformBounds.overlaps(playerBounds)) {
-            playerVelocity.y = PLAYER_JUMP_VELOCITY;
+        if (Gdx.input.justTouched() || platformBounds.overlaps(player.bounds)) {
+            player.velocity.y = PLAYER_JUMP_VELOCITY;
         }
 
         //apply the force of gravity
-        playerVelocity.add(gravity);
-        playerPosition.mulAdd(playerVelocity, deltaTime);
-        playerBounds.setX(playerPosition.x);
-        playerBounds.setY(playerPosition.y);
+        player.velocity.add(gravity);
+        player.position.mulAdd(player.velocity, deltaTime);
+        player.bounds.setX(player.position.x);
+        player.bounds.setY(player.position.y);
     }
 
     private void drawGame() {
         batch.begin();
-        batch.draw(playerImage, playerPosition.x, playerPosition.y);
+        batch.draw(player.image, player.position.x, player.position.y);
         batch.draw(platformImage, platformBounds.x, platformBounds.y);
         batch.end();
     }
