@@ -63,10 +63,10 @@ public class MegaJumper extends ApplicationAdapter {
         player.velocity.set(0, 0);
 
         platforms.clear();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 20; i++) {
             Platform p = new Platform();
             p.position.x = (float) (Math.random() * width);
-            p.position.y = i * height / 2;
+            p.position.y = i * 3 * height / 10;
             p.bounds.setX(p.position.x);
             p.bounds.setY(p.position.y);
             platforms.add(p);
@@ -77,15 +77,15 @@ public class MegaJumper extends ApplicationAdapter {
         //time elapsed since last call to render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        if (Gdx.input.justTouched()) {
-            player.velocity.y = PLAYER_JUMP_VELOCITY;
-        }
-
-        //if user hits a platform, start jumping
+        //if user hits a platform *from above*, start jumping
         for (Platform platform : platforms) {
-            if (platform.bounds.overlaps(player.bounds))
+            if (platform.bounds.overlaps(player.bounds) && platform.position.y < player.position.y)
                 player.velocity.y = PLAYER_JUMP_VELOCITY;
         }
+
+        //also jump if you're on the ground
+        if (player.position.y < 0)
+            player.velocity.y = PLAYER_JUMP_VELOCITY;
 
         //apply gravity
         player.velocity.add(gravity);
