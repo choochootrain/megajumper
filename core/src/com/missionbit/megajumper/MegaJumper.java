@@ -57,10 +57,10 @@ public class MegaJumper extends ApplicationAdapter {
         player.velocity.set(0, 0);
 
         platforms.clear();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 2; i++) {
             Platform p = new Platform();
             p.position.x = (float) (Math.random() * width);
-            p.position.y = i * height / 5;
+            p.position.y = i * height / 2;
             p.bounds.setX(p.position.x);
             p.bounds.setY(p.position.y);
             platforms.add(p);
@@ -81,11 +81,19 @@ public class MegaJumper extends ApplicationAdapter {
                 player.velocity.y = PLAYER_JUMP_VELOCITY;
         }
 
-        //apply the force of gravity
+        //apply gravity
         player.velocity.add(gravity);
-        player.position.mulAdd(player.velocity, deltaTime);
         player.bounds.setX(player.position.x);
         player.bounds.setY(player.position.y);
+
+        //apply accelerometer control
+        float accelX = Gdx.input.getAccelerometerX();
+        player.velocity.x = -accelX * 200;
+
+        player.position.mulAdd(player.velocity, deltaTime);
+
+        //x position wraps around
+        player.position.x = (player.position.x + width) % width;
     }
 
     private void drawGame() {
